@@ -2,8 +2,7 @@ use crate::assets::Assets;
 
 use ggez::{
     event::{KeyCode, MouseButton},
-    graphics::{Color, DrawParam},
-    nalgebra::Point2,
+    graphics::DrawParam,
     Context,
 };
 
@@ -73,11 +72,15 @@ impl Board {
             std::cmp::Ordering::Greater => println!("White won!"),
         }
     }
+    // Returns a Vec<(usize, usize)> of counters that would be taken, if
+    // `to_place` is placed at `x` `y`.
+    // An empty Vec indicates an invalid move
     fn place(&mut self, x: isize, y: isize, to_place: Counter) -> Vec<(usize, usize)> {
         let mut to_return = Vec::new();
         for (x_dir, y_dir) in POSSIBLE_DIRECTIONS.iter() {
             let mut temp_x = x + x_dir;
             let mut temp_y = y + y_dir;
+
             // If there's been a different colour counter since beginning
             let mut different = false;
             let mut temp_cache = Vec::new();
@@ -120,7 +123,7 @@ impl ggez::event::EventHandler for Board {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> ggez::GameResult {
-        ggez::graphics::clear(ctx, Color::from_rgb(0, 175, 0));
+        ggez::graphics::clear(ctx, ggez::graphics::Color::from_rgb(0, 175, 0));
 
         for (x, row) in self.board.iter().enumerate() {
             for (y, counter) in row.iter().enumerate() {
@@ -138,7 +141,7 @@ impl ggez::event::EventHandler for Board {
                             ggez::graphics::draw(
                                 ctx,
                                 &self.assets.white,
-                                DrawParam::new().dest(Point2::new(x as f32 * 50., y as f32 * 50.)),
+                                DrawParam::new().dest([x as f32 * 50., y as f32 * 50.]),
                             )
                             .unwrap();
                         }

@@ -10,14 +10,14 @@ fn main() -> ggez::GameResult {
         title: "Othello".to_owned(),
         samples: NumSamples::Zero,
         vsync: true,
-        icon: "/othello.png".to_owned(),
+        icon: "".to_owned(),
         srgb: true,
     };
-    let mode = ggez::conf::WindowMode {
+    let mode = WindowMode {
         width: 400.,
         height: 400.,
         maximized: false,
-        fullscreen_type: ggez::conf::FullscreenType::Windowed,
+        fullscreen_type: FullscreenType::Windowed,
         borderless: false,
         min_width: 0.0,
         max_width: 0.0,
