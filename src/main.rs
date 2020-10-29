@@ -28,7 +28,10 @@ fn main() -> ggez::GameResult {
     let cb = ggez::ContextBuilder::new("Othello", "flauntingspade4");
     let (ctx, events_loop) = &mut cb.window_setup(setup).window_mode(mode).build()?;
     let state = &mut Board::new(ctx);
-    event::run(ctx, events_loop, state).unwrap();
 
-    Ok(())
+    println!(
+        "Press 'r' to restart the game\nPress 's' to skip your go\nPress 'esc' to end the game"
+    );
+
+    event::run(ctx, events_loop, state)
 }
