@@ -1358,11 +1358,15 @@ dependencies = [
 ]
 
 [[package]]
-name = "othello"
+name = "othello-client"
 version = "0.1.0"
 dependencies = [
  "ggez",
 ]
+
+[[package]]
+name = "othello-server"
+version = "0.1.0"
 
 [[package]]
 name = "parking_lot"

@@ -1,0 +1,13 @@
+[package]
+authors = ["flauntingspade4 <48335751+flauntingspade4@users.noreply.github.com>"]
+edition = "2018"
+name = "othello-client"
+version = "0.1.0"
+
+[profile.release]
+lto = 'thin'
+panic = 'abort'
+codegen-units = 1
+
+[dependencies]
+ggez = "0.5.1"
