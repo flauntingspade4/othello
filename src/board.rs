@@ -75,17 +75,14 @@ impl Board {
     }
     fn place(&mut self, x: isize, y: isize, to_place: Counter) -> Vec<(usize, usize)> {
         let mut to_return = Vec::new();
-        println!("Attempting to place at {}, {}", x, y);
         for (x_dir, y_dir) in POSSIBLE_DIRECTIONS.iter() {
-            println!("Current direction ({}, {})", x_dir, y_dir);
             let mut temp_x = x + x_dir;
             let mut temp_y = y + y_dir;
             // If there's been a different colour counter since beginning
             let mut different = false;
             let mut temp_cache = Vec::new();
 
-            while temp_x < 7 && temp_x >= 0 && temp_y < 7 && temp_y >= 0 {
-                println!("Currently looking at {} {}", temp_x, temp_y);
+            while temp_x < 8 && temp_x >= 0 && temp_y < 8 && temp_y >= 0 {
                 match self.board[temp_x as usize][temp_y as usize] {
                     Some(t) => {
                         if t == to_place {
