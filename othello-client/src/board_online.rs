@@ -23,12 +23,19 @@ const POSSIBLE_DIRECTIONS: [(isize, isize); 8] = [
 
 pub struct BoardOnline {
     board: [[Option<Counter>; 8]; 8],
+    // The current turn
     turn: bool,
+    // Which team this BoardOnline belongs to
     team: bool,
     assets: Assets,
+    // How many empty spaces remain
     remaining: usize,
     stream: TcpStream,
     buffer: [u8; 2],
+    // The `time` field acts as a workaround to the fact
+    // that recieving the opponent's command will usually
+    // block, meaning that the gui won't update for the
+    // turn you just played
     time: usize,
 }
 
@@ -40,11 +47,12 @@ impl BoardOnline {
         board[4][3] = Some(Counter::Black);
         board[3][4] = Some(Counter::Black);
         board[4][4] = Some(Counter::White);
-        println!("You are team {}", Counter::from(team != 0));
+        let team = team != 0;
+        println!("You are team {}", Counter::from(team));
         Self {
             board,
             turn: false,
-            team: team != 0,
+            team,
             assets: Assets::new(ctx),
             remaining: 8 * 8 - 4,
             stream,
@@ -190,29 +198,30 @@ impl ggez::event::EventHandler for BoardOnline {
     fn mouse_button_down_event(&mut self, _ctx: &mut Context, button: MouseButton, x: f32, y: f32) {
         if self.turn != self.team {
             return;
-        }
-        if button == MouseButton::Left {
-            let x = (x / 50.) as usize;
-            let y = (y / 50.) as usize;
-            if self.board[x][y].is_some() {
-                println!("Already a counter there!");
-            } else {
-                let counter = Counter::from(self.team);
-                let to_place = self.place(x as isize, y as isize, counter);
-
-                // If the move isn't valid
-                if to_place.is_empty() {
-                    println!("Invalid move");
+        } else {
+            if button == MouseButton::Left {
+                let x = (x / 50.) as usize;
+                let y = (y / 50.) as usize;
+                if self.board[x][y].is_some() {
+                    println!("Already a counter there!");
                 } else {
-                    self.board[x][y] = Some(counter);
-                    for (x, y) in to_place {
+                    let counter = Counter::from(self.team);
+                    let to_place = self.place(x as isize, y as isize, counter);
+
+                    // If the move isn't valid
+                    if to_place.is_empty() {
+                        println!("Invalid move");
+                    } else {
                         self.board[x][y] = Some(counter);
-                    }
-                    self.next_turn();
-                    self.remaining -= 1;
-                    match self.stream.write(format!("{}{}", x, y).as_bytes()) {
-                        Ok(_) => self.time = 1,
-                        Err(e) => println!("Error {} whilst writing to server", e),
+                        for (x, y) in to_place {
+                            self.board[x][y] = Some(counter);
+                        }
+                        self.next_turn();
+                        self.remaining -= 1;
+                        match self.stream.write(format!("{}{}", x, y).as_bytes()) {
+                            Ok(_) => self.time = 1,
+                            Err(e) => println!("Error {} whilst writing to server", e),
+                        }
                     }
                 }
             }

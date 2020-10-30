@@ -46,10 +46,8 @@ fn handle_all(streams: &mut Vec<TcpStream>) -> Result<()> {
         if buf[0] == 0 {
             return Ok(());
         }
-        println!("Recieved {:?} from stream {}", buf, turn);
         for (i, stream) in streams.iter_mut().enumerate() {
             if i != turn {
-                println!("Sending {:?} to stream {}", buf, i);
                 stream.write_all(&buf)?;
             }
         }
